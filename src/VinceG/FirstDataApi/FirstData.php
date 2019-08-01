@@ -1,5 +1,5 @@
 <?php
-namespace VinceG\FirstDataApi;
+namespace integready\FirstDataApi;
 
 /**
  * First Data
