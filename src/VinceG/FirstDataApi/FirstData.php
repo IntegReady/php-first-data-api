@@ -553,7 +553,7 @@ class FirstData
 		}
 
 		// Make sure the response does not have error in it
-		if(!$response || !count($response)) {
+		if(!$response || empty($response)) {
 			return true;
 		}
 
@@ -782,7 +782,7 @@ class FirstData
 	 * @return mixed
 	 */
 	protected function getValueByKey($data, $key) {
-		if(count($data)) {
+		if(is_countable($data) && count($data) >= 1) {
 			foreach($data as $k=>$each) {
 		  		if($k==$key) {
 		   			return $each;
