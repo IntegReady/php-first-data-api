@@ -1,29 +1,19 @@
 {
-    "name": "vinceg/firstdataapi",
+    "name": "integready/firstdataapi",
     "type": "library",
     "description": "First Data Api",
     "keywords": [],
-    "homepage": "http://vadimg.com/",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Vincent Gabriel",
-            "email": "vadimg88@gmail.com"
-        },
-        {
-            "name": "Vincent Gabriel",
-            "homepage": "http://vadimg.com/"
-        }
-    ],
+    "authors": [],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=7.1",
         "ext-curl": "*"
     },
     "autoload": {
         "psr-0": {
-            "VinceG\\FirstDataApi\\": "VinceG/FirstDataApi/src"
+            "integready\\FirstDataApi\\": "integready/FirstDataApi/src"
         }
     },
-    "target-dir": "VinceG/FirstDataApi",
-    "minimum-stability": "dev"
+    "target-dir": "integready/FirstDataApi",
+    "minimum-stability": "stable"
 }
