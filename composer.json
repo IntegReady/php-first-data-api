@@ -7,13 +7,14 @@
     "authors": [],
     "require": {
         "php": ">=7.1",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-0": {
-            "integready\\FirstDataApi\\": "integready/FirstDataApi/src"
+            "integready\\firstdataapi\\": "integready/firstdataapi/src"
         }
     },
-    "target-dir": "integready/FirstDataApi",
+    "target-dir": "integready/firstdataapi",
     "minimum-stability": "stable"
 }

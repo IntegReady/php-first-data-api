@@ -18,7 +18,7 @@ Add this to your project composer.json:
 
 ```
 	"require": {
-        "vinceg/firstdataapi": "dev-master"
+        "integready/firstdataapi": "dev-master"
 	},
 ```
 
@@ -26,7 +26,7 @@ To use the component:
 
 ```php
 <?php
-use VinceG\FirstDataApi\FirstData;
+use integready\firstdataapi\FirstData;
 
 //
 // 3rd Parameter sets debug mode on.  
