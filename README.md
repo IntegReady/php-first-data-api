@@ -1,8 +1,6 @@
 First Data Global Gateway PHP API Service
 ==================
 
-<a href='https://twitter.com/gabrielva' target='_blank'>Follow @gabrielva</a>
-
 This component provides a PHP Wrapper to post api calls to the First Data payment processor.
 
 It requires curl and the php curl extension.
@@ -33,7 +31,7 @@ use integready\firstdataapi\FirstData;
 // In debug mode, the demo gateway is used.  
 // You will need to create a demo gateway account with First Data
 // 
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 ```
 
@@ -44,6 +42,8 @@ $firstData = new FirstData(API_LOGIN, API_KEY, true);
 In these examples:
 * API_LOGIN is the Terminal Gateway ID of your commerce terminal.
 * API_KEY is the password you generate in the terminal screen.
+* HMAC_ID is the HMAC ID of your commerce terminal.
+* HMAC_KEY is the HMAC Key you generate in the terminal screen.
 
 
 ### Examples:
@@ -52,7 +52,7 @@ In these examples:
 
 ```
 // Pre Auth Transaction Type
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PREAUTH);
@@ -89,7 +89,7 @@ if($firstData->isError()) {
 
 ```
 // Purchase Transaction type
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PURCHASE);
@@ -126,7 +126,7 @@ if($firstData->isError()) {
 
 ```
 // Purchase Transaction type
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PURCHASE);
@@ -151,7 +151,7 @@ if($firstData->isError()) {
 
 ```
 // Purchase Transaction type
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PREAUTHCOMPLETE);
@@ -177,7 +177,7 @@ if($firstData->isError()) {
 
 ```
 // Purchase Transaction type
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_REFUND);
@@ -202,7 +202,7 @@ if($firstData->isError()) {
 
 ```
 // Purchase Transaction type
-$firstData = new FirstData(API_LOGIN, API_KEY, true);
+$firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_VOID);
@@ -222,8 +222,6 @@ if($firstData->isError()) {
 	// transaction passed
 }
 ```
-
-<p>&copy; <a href='http://vadimg.com' target="_blank">Vadim Vincent Gabriel</a> <a href='https://twitter.com/gabrielva' target='_blank'>Follow @gabrielva</a> 2013</p>
 
 License
 ===============
