@@ -982,6 +982,10 @@ class FirstData
             }
         }
 
+        if ($data instanceof \stdClass) {
+            return $data->{$key} ?? null;
+        }
+
         // Nothing matched
         return null;
     }
