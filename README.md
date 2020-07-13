@@ -3,11 +3,7 @@ First Data Global Gateway PHP API Service
 
 This component provides a PHP Wrapper to post api calls to the First Data payment processor.
 
-It requires curl and the php curl extension.
-
-## Features:
-* Supports all transaction types.
-* Supports Transarmor Token for charging credit cards more than once without storing the actual card number. 
+It requires `curl` and the `php_curl` extension.
 
 ## Installation
 This library is now installable using <a href='http://getcomposer.org'>Composer</a>
@@ -15,9 +11,10 @@ This library is now installable using <a href='http://getcomposer.org'>Composer<
 Add this to your project composer.json:
 
 ```
-	"require": {
-        "integready/firstdataapi": "dev-master"
-	},
+"require": {
+    // ...
+    "integready/firstdataapi": "dev-master"
+},
 ```
 
 To use the component:
@@ -26,24 +23,24 @@ To use the component:
 <?php
 use integready\firstdataapi\FirstData;
 
-//
-// 3rd Parameter sets debug mode on.  
-// In debug mode, the demo gateway is used.  
-// You will need to create a demo gateway account with First Data
-// 
+/**
+ * 3rd Parameter sets debug mode on.
+ * In debug mode, the demo gateway is used. 
+ * You will need to create a demo gateway account with First Data
+ */
 $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 
 ```
 
 ## Documentation and Examples 
 ### First Data Documentation:
-<a href='https://firstdata.zendesk.com/entries/407571-First-Data-Global-Gateway-e4-Web-Service-API-Reference-Guide'>Api Reference Guide</a>
+<a href='https://firstdata.zendesk.com/entries/407571-First-Data-Global-Gateway-e4-Web-Service-API-Reference-Guide'>API Reference Guide</a>
 
 In these examples:
-* API_LOGIN is the Terminal Gateway ID of your commerce terminal.
-* API_KEY is the password you generate in the terminal screen.
-* HMAC_ID is the HMAC ID of your commerce terminal.
-* HMAC_KEY is the HMAC Key you generate in the terminal screen.
+* `API_LOGIN` is the Terminal Gateway ID of your commerce terminal.
+* `API_KEY` is the password you generate in the terminal screen.
+* `HMAC_ID` is the HMAC ID of your commerce terminal.
+* `HMAC_KEY` is the HMAC Key you generate in the terminal screen.
 
 
 ### Examples:
@@ -57,31 +54,31 @@ $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PREAUTH);
 $firstData->setCreditCardType($data['type'])
-		->setCreditCardNumber($data['number'])
-		->setCreditCardName($data['name'])
-		->setCreditCardExpiration($data['exp'])
-		->setAmount($data['amount'])
-		->setReferenceNumber($orderId);
+    ->setCreditCardNumber($data['number'])
+    ->setCreditCardName($data['name'])
+    ->setCreditCardExpiration($data['exp'])
+    ->setAmount($data['amount'])
+    ->setReferenceNumber($orderId);
 
 if($data['zip']) {
-	$firstData->setCreditCardZipCode($data['zip']);
+    $firstData->setCreditCardZipCode($data['zip']);
 }
 
 if($data['cvv']) {
-	$firstData->setCreditCardVerification($data['cvv']);
+    $firstData->setCreditCardVerification($data['cvv']);
 }
 
 if($data['address']) {
-	$firstData->setCreditCardAddress($data['address']);
+    $firstData->setCreditCardAddress($data['address']);
 }
 
 $firstData->process();
 
 // Check
 if($firstData->isError()) {
-	// there was an error
+    // there was an error
 } else {
-	// transaction passed
+    // transaction passed
 }
 ```
 
@@ -94,31 +91,31 @@ $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PURCHASE);
 $firstData->setCreditCardType($data['type'])
-		->setCreditCardNumber($data['number'])
-		->setCreditCardName($data['name'])
-		->setCreditCardExpiration($data['exp'])
-		->setAmount($data['amount'])
-		->setReferenceNumber($orderId);
+    ->setCreditCardNumber($data['number'])
+    ->setCreditCardName($data['name'])
+    ->setCreditCardExpiration($data['exp'])
+    ->setAmount($data['amount'])
+    ->setReferenceNumber($orderId);
 
 if($data['zip']) {
-	$firstData->setCreditCardZipCode($data['zip']);
+    $firstData->setCreditCardZipCode($data['zip']);
 }
 
 if($data['cvv']) {
-	$firstData->setCreditCardVerification($data['cvv']);
+    $firstData->setCreditCardVerification($data['cvv']);
 }
 
 if($data['address']) {
-	$firstData->setCreditCardAddress($data['address']);
+    $firstData->setCreditCardAddress($data['address']);
 }
 
 $firstData->process();
 
 // Check
 if($firstData->isError()) {
-	// there was an error
+    // there was an error
 } else {
-	// transaction passed
+    // transaction passed
 }
 ```
 
@@ -131,19 +128,19 @@ $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PURCHASE);
 $firstData->setCreditCardType($data['number'])
-		->setTransArmorToken($data['token'])
-		->setCreditCardName($data['name'])
-		->setCreditCardExpiration($data['exp'])
-		->setAmount($data['amount'])
-		->setReferenceNumber($orderId);
+    ->setTransArmorToken($data['token'])
+    ->setCreditCardName($data['name'])
+    ->setCreditCardExpiration($data['exp'])
+    ->setAmount($data['amount'])
+    ->setReferenceNumber($orderId);
 
 $firstData->process();
 
 // Check
 if($firstData->isError()) {
-	// there was an error
+    // there was an error
 } else {
-	// transaction passed
+    // transaction passed
 }
 ```
 
@@ -156,20 +153,20 @@ $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_PREAUTHCOMPLETE);
 $firstData->setCreditCardType($data['number'])
-		->setTransArmorToken($data['token'])
-		->setCreditCardName($data['name'])
-		->setCreditCardExpiration($data['exp'])
-		->setAuthNumber($dat['auth_number'])
-		->setAmount($data['amount'])
-		->setReferenceNumber($orderId);
+    ->setTransArmorToken($data['token'])
+    ->setCreditCardName($data['name'])
+    ->setCreditCardExpiration($data['exp'])
+    ->setAuthNumber($dat['auth_number'])
+    ->setAmount($data['amount'])
+    ->setReferenceNumber($orderId);
 
 $firstData->process();
 
 // Check
 if($firstData->isError()) {
-	// there was an error
+    // there was an error
 } else {
-	// transaction passed
+    // transaction passed
 }
 ```
 
@@ -182,19 +179,19 @@ $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_REFUND);
 $firstData->setCreditCardNumber($data['number'])
-		->setTransArmorToken($data['token'])
-		->setCreditCardName($data['name'])
-		->setCreditCardExpiration($data['exp'])
-		->setAmount($data['amount'])
-		->setReferenceNumber($orderId);
+    ->setTransArmorToken($data['token'])
+    ->setCreditCardName($data['name'])
+    ->setCreditCardExpiration($data['exp'])
+    ->setAmount($data['amount'])
+    ->setReferenceNumber($orderId);
 
 $firstData->process();
 
 // Check
 if($firstData->isError()) {
-	// there was an error
+    // there was an error
 } else {
-	// transaction passed
+    // transaction passed
 }
 ```
 
@@ -207,19 +204,19 @@ $firstData = new FirstData(API_LOGIN, API_KEY, HMAC_ID, HMAC_KEY, true);
 // Charge
 $firstData->setTransactionType(FirstData::TRAN_VOID);
 $firstData->setCreditCardType($data['number'])
-		->setTransArmorToken($data['token'])
-		->setCreditCardName($data['name'])
-		->setCreditCardExpiration($data['exp'])
-		->setAmount($data['amount'])
-		->setReferenceNumber($orderId);
+    ->setTransArmorToken($data['token'])
+    ->setCreditCardName($data['name'])
+    ->setCreditCardExpiration($data['exp'])
+    ->setAmount($data['amount'])
+    ->setReferenceNumber($orderId);
 
 $firstData->process();
 
 // Check
 if($firstData->isError()) {
-	// there was an error
+    // there was an error
 } else {
-	// transaction passed
+    // transaction passed
 }
 ```
 

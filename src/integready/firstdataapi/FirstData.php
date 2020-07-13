@@ -2,76 +2,93 @@
 
 namespace integready\firstdataapi;
 
+use GuzzleHttp\Ring\Client\CurlHandler;
+use stdClass;
+
 /**
  * Class FirstData
  */
 class FirstData
 {
-    const LIVE_API_URL = 'https://api.globalgatewaye4.firstdata.com/transaction/';
-    const TEST_API_URL = 'https://api.demo.globalgatewaye4.firstdata.com/transaction/';
+    public const LIVE_API_URL = 'https://api.globalgatewaye4.firstdata.com/transaction/';
+    public const TEST_API_URL = 'https://api.demo.globalgatewaye4.firstdata.com/transaction/';
+
     /**
-     * @var string - the api username
+     * @var string - the API username
      */
-    protected $username = null;
+    protected $username;
+
     /**
-     * @var string - the api password
+     * @var string - the API password
      */
-    protected $password = null;
+    protected $password;
+
     /**
-     * @var int - api transaction type
+     * @var int - API transaction type
      */
     protected $transactionType = '00';
+
     /**
-     *  the error code if one exists
-     * @var integer
+     * The error code if one exists
+     * @var int
      */
     protected $errorCode = 0;
+
     /**
-     * the error message if one exists
+     * The error message if one exists
      * @var string
      */
     protected $errorMessage = '';
+
     /**
-     *  the response message
+     * The response message
      * @var string
      */
     protected $response = '';
+
     /**
-     *  the headers returned from the call made
+     * The headers returned from the call made
      * @var array
      */
     protected $headers = '';
+
     /**
      * The response represented as an array
      * @var array
      */
     protected $arrayResponse = [];
+
     /**
      * All the post fields we will add to the call
      * @var array
      */
     protected $postFields = [];
+
     /**
-     * The api type we are about to call
+     * The API type we are about to call
      * @var string
      */
     protected $apiVersion = 'v12';
+
     /**
-     * The api key id needed for hmac headers
+     * The API key id needed for hmac headers
      * @var string
      */
     protected $apiId = '';
+
     /**
-     * The api key needed for hmac headers
+     * The API key needed for hmac headers
      * @var string
      */
     protected $apiKey = '';
+
     /**
      * @var boolean - set whether we are in a test mode or not
      */
     public static $testMode = false;
+
     /**
-     * Default options for curl.
+     * Default options for CURL.
      */
     public static $CURL_OPTS = [
         CURLOPT_CONNECTTIMEOUT => 30,
@@ -88,25 +105,25 @@ class FirstData
     /**
      * Transaction types
      */
-    const TRAN_PURCHASE              = '00';
-    const TRAN_PREAUTH               = '01';
-    const TRAN_PREAUTHCOMPLETE       = '02';
-    const TRAN_FORCEDPOST            = '03';
-    const TRAN_REFUND                = '04';
-    const TRAN_PREAUTHONLY           = '05';
-    const TRAN_PAYPALORDER           = '07';
-    const TRAN_VOID                  = '13';
-    const TRAN_TAGGEDPREAUTHCOMPLETE = '32';
-    const TRAN_TAGGEDVOID            = '33';
-    const TRAN_TAGGEDREFUND          = '34';
-    const TRAN_CASHOUT               = '83';
-    const TRAN_ACTIVATION            = '85';
-    const TRAN_BALANCEINQUIRY        = '86';
-    const TRAN_RELOAD                = '88';
-    const TRAN_DEACTIVATION          = '89';
+    public const TRAN_PURCHASE              = '00';
+    public const TRAN_PREAUTH               = '01';
+    public const TRAN_PREAUTHCOMPLETE       = '02';
+    public const TRAN_FORCEDPOST            = '03';
+    public const TRAN_REFUND                = '04';
+    public const TRAN_PREAUTHONLY           = '05';
+    public const TRAN_PAYPALORDER           = '07';
+    public const TRAN_VOID                  = '13';
+    public const TRAN_TAGGEDPREAUTHCOMPLETE = '32';
+    public const TRAN_TAGGEDVOID            = '33';
+    public const TRAN_TAGGEDREFUND          = '34';
+    public const TRAN_CASHOUT               = '83';
+    public const TRAN_ACTIVATION            = '85';
+    public const TRAN_BALANCEINQUIRY        = '86';
+    public const TRAN_RELOAD                = '88';
+    public const TRAN_DEACTIVATION          = '89';
 
     /**
-     * Constructor
+     * FirstData constructor.
      *
      * @param string $username - username
      * @param string $password - password
@@ -114,7 +131,7 @@ class FirstData
      * @param string $hmacKey - HMAC Key
      * @param bool $debug - debug mode
      */
-    public function __construct($username, $password, $hmacID = '', $hmacKey = '', $debug = false)
+    public function __construct(string $username, string $password, $hmacID = '', $hmacKey = '', $debug = false)
     {
         $this->username = $username;
         $this->password = $password;
@@ -125,13 +142,13 @@ class FirstData
     }
 
     /**
-     * set the api username we are going to user
+     * Set the API username we are going to user
      *
-     * @param string $username - the api username
+     * @param string $username - the API username
      *
-     * @return object
+     * @return self
      */
-    public function setUsername($username)
+    public function setUsername($username): self
     {
         $this->username = $username;
 
@@ -139,13 +156,13 @@ class FirstData
     }
 
     /**
-     * set the api password we are going to user
+     * Set the API password we are going to user
      *
-     * @param string $username - the api password
+     * @param string $password - the API password
      *
-     * @return object
+     * @return self
      */
-    public function setPassword($password)
+    public function setPassword($password): self
     {
         $this->password = $password;
 
@@ -156,7 +173,7 @@ class FirstData
      * Return the post data fields as an array
      * @return array
      */
-    public function getPostData()
+    public function getPostData(): array
     {
         return $this->postFields;
     }
@@ -167,9 +184,9 @@ class FirstData
      * @param mixed $key
      * @param mixed $value
      *
-     * @return object
+     * @return self
      */
-    public function setPostData($key, $value = null)
+    public function setPostData($key, $value = null): self
     {
         if (is_array($key) && !$value) {
             foreach ($key as $k => $v) {
@@ -183,13 +200,13 @@ class FirstData
     }
 
     /**
-     * Set the api version we are going to use
+     * Set the API version we are going to use
      *
-     * @param string $version the new api version
+     * @param string $version the new API version
      *
-     * @return object
+     * @return self
      */
-    public function setApiVersion($version)
+    public function setApiVersion($version): self
     {
         $this->apiVersion = $version;
 
@@ -197,13 +214,13 @@ class FirstData
     }
 
     /**
-     * Set the api id we are going to use for hmac hash
+     * Set the API id we are going to use for hmac hash
      *
-     * @param string $id the new api id
+     * @param string $id the new API id
      *
-     * @return object
+     * @return self
      */
-    public function setApiId($id)
+    public function setApiId($id): self
     {
         $this->apiId = $id;
 
@@ -211,13 +228,13 @@ class FirstData
     }
 
     /**
-     * Set the api key we are going to use for hmac hash
+     * Set the API key we are going to use for hmac hash
      *
-     * @param string $key the new api key
+     * @param string $key the new API key
      *
-     * @return object
+     * @return self
      */
-    public function setApiKey($key)
+    public function setApiKey($key): self
     {
         $this->apiKey = $key;
 
@@ -231,7 +248,7 @@ class FirstData
      *
      * @return void
      */
-    public function setTestMode($value)
+    public function setTestMode($value): void
     {
         self::$testMode = (bool)$value;
     }
@@ -241,9 +258,9 @@ class FirstData
      *
      * @param int $transactionType
      *
-     * @return object
+     * @return self
      */
-    public function setTransactionType($transactionType)
+    public function setTransactionType($transactionType): self
     {
         $this->transactionType = $transactionType;
 
@@ -260,13 +277,13 @@ class FirstData
     }
 
     /**
-     * set credit card number
+     * Set credit card number
      *
      * @param int $number
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardNumber($number)
+    public function setCreditCardNumber($number): self
     {
         $this->setPostData('cc_number', (string)$number);
 
@@ -274,13 +291,13 @@ class FirstData
     }
 
     /**
-     * set credit card type
+     * Set credit card type
      *
-     * @param int $number
+     * @param int $type
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardType($type)
+    public function setCreditCardType($type): self
     {
         $this->setPostData('credit_card_type', $type);
 
@@ -288,18 +305,20 @@ class FirstData
     }
 
     /**
+     * =====================================================================================
      * Setting Track 1 and Track 2 data allows input from USB credit card swiper
      * For format of track data see: http://www.gae.ucm.es/~padilla/extrawork/magexam1.html
+     * =====================================================================================
      */
 
     /**
-     * set Track1 data
+     * Set Track1 data
      *
      * @param string $track
      *
-     * @return object
+     * @return self
      */
-    public function setTrack1($track)
+    public function setTrack1($track): self
     {
         $this->setPostData('track1', $track);
 
@@ -307,13 +326,13 @@ class FirstData
     }
 
     /**
-     * set Track2 data
+     * Set Track2 data
      *
      * @param string $track
      *
-     * @return object
+     * @return self
      */
-    public function setTrack2($track)
+    public function setTrack2($track): self
     {
         $this->setPostData('track2', $track);
 
@@ -321,13 +340,13 @@ class FirstData
     }
 
     /**
-     * set credit card holder name
+     * Set credit card holder name
      *
      * @param string $name
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardName($name)
+    public function setCreditCardName($name): self
     {
         $this->setPostData('cardholder_name', $name);
 
@@ -335,13 +354,13 @@ class FirstData
     }
 
     /**
-     * set credit card expiration date
+     * Set credit card expiration date
      *
      * @param int $date
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardExpiration($date)
+    public function setCreditCardExpiration($date): self
     {
         $this->setPostData('cc_expiry', $date);
 
@@ -349,13 +368,13 @@ class FirstData
     }
 
     /**
-     * set amount
+     * Set amount
      *
      * @param double $amount
      *
-     * @return object
+     * @return self
      */
-    public function setAmount($amount)
+    public function setAmount($amount): self
     {
         $this->setPostData('amount', $amount);
 
@@ -363,13 +382,13 @@ class FirstData
     }
 
     /**
-     * set trans armor token
+     * Set trans armor token
      *
      * @param string $token
      *
-     * @return object
+     * @return self
      */
-    public function setTransArmorToken($token)
+    public function setTransArmorToken($token): self
     {
         $this->setPostData('transarmor_token', $token);
 
@@ -377,13 +396,13 @@ class FirstData
     }
 
     /**
-     * set auth number
+     * Set auth number
      *
      * @param string $number
      *
-     * @return object
+     * @return self
      */
-    public function setAuthNumber($number)
+    public function setAuthNumber($number): self
     {
         $this->setPostData('authorization_num', $number);
 
@@ -391,18 +410,16 @@ class FirstData
     }
 
     /**
-     * set credit card address
+     * Set credit card address
      * VerificationStr1 is comprised of the following constituent address values: Street, Zip/Postal Code, City, State/Provence, Country.
-     * They are separted by the Pipe Character "|".
-     *    Street Address|Zip/Postal|City|State/Prov|Country
-     *
-     * used for verification
+     * They are separted by the Pipe Character "|". Street Address|Zip/Postal|City|State/Prov|Country
+     * Used for verification
      *
      * @param string $address
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardAddress($address)
+    public function setCreditCardAddress($address): self
     {
         $this->setPostData('cc_verification_str1', $address);
 
@@ -410,14 +427,14 @@ class FirstData
     }
 
     /**
-     * set credit card address
-     * used for verification, replaces the old cc_verification_str1 with the new address type
+     * Set credit card address
+     * Used for verification, replaces the old cc_verification_str1 with the new address type
      *
      * @param array $address
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardAddressNew($address)
+    public function setCreditCardAddressNew($address): self
     {
         $this->setPostData('address', $address);
 
@@ -425,16 +442,16 @@ class FirstData
     }
 
     /**
-     * set credit card cvv code
+     * Set credit card cvv code
      * This is the 0, 3, or 4-digit code on the back of the credit card sometimes called the CVV2 or CVD value.
      *
-     * used for verification
+     * Used for verification
      *
      * @param int $cvv
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardVerification($cvv)
+    public function setCreditCardVerification($cvv): self
     {
         $this->setPostData('cc_verification_str2', $cvv);
         $this->setPostData('cvd_presence_ind', 1);
@@ -443,16 +460,16 @@ class FirstData
     }
 
     /**
-     * set credit card cavv code
+     * Set credit card cavv code
      * This is the 0, 3, or 4-digit code on the back of the credit card sometimes called the CVV2 or CVD value.
      *
-     * used for verification
+     * Used for verification
      *
-     * @param int $cvv
+     * @param int $cavv
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardCAVV($cavv)
+    public function setCreditCardCAVV($cavv): self
     {
         $this->setPostData('cavv', $cavv);
 
@@ -460,15 +477,15 @@ class FirstData
     }
 
     /**
-     * set credit card zip code
+     * Set credit card zip code
      *
-     * used for verification
+     * Used for verification
      *
      * @param int $zip
      *
-     * @return object
+     * @return self
      */
-    public function setCreditCardZipCode($zip)
+    public function setCreditCardZipCode($zip): self
     {
         $this->setPostData('zip_code', $zip);
 
@@ -476,13 +493,13 @@ class FirstData
     }
 
     /**
-     * set currency code
+     * Set currency code
      *
      * @param string $code
      *
-     * @return object
+     * @return self
      */
-    public function setCurrency($code)
+    public function setCurrency($code): self
     {
         $this->setPostData('currency_code', $code);
 
@@ -490,13 +507,13 @@ class FirstData
     }
 
     /**
-     * set client ip
+     * Set client IP
      *
      * @param string $ip
      *
-     * @return object
+     * @return self
      */
-    public function setClientIp($ip)
+    public function setClientIp($ip): self
     {
         $this->setPostData('client_ip', $ip);
 
@@ -504,13 +521,13 @@ class FirstData
     }
 
     /**
-     * set client email
+     * Set client email
      *
      * @param string $email
      *
-     * @return object
+     * @return self
      */
-    public function setClientEmail($email)
+    public function setClientEmail($email): self
     {
         $this->setPostData('client_email', $email);
 
@@ -518,13 +535,13 @@ class FirstData
     }
 
     /**
-     * set reference number
+     * Set reference number
      *
      * @param int $number
      *
-     * @return object
+     * @return self
      */
-    public function setReferenceNumber($number)
+    public function setReferenceNumber($number): self
     {
         $this->setPostData('reference_no', $number);
 
@@ -532,13 +549,13 @@ class FirstData
     }
 
     /**
-     * set transaction tag
+     * Set transaction tag
      *
      * @param int $number
      *
-     * @return object
+     * @return self
      */
-    public function setTransactionTag($number)
+    public function setTransactionTag($number): self
     {
         $this->setPostData('transaction_tag', $number);
 
@@ -546,13 +563,13 @@ class FirstData
     }
 
     /**
-     * set customerNumber
+     * Set customerNumber
      *
      * @param string $number
      *
-     * @return object
+     * @return self
      */
-    public function setCustomerReferenceNumber($number)
+    public function setCustomerReferenceNumber($number): self
     {
         $this->setPostData('customer_ref', $number);
 
@@ -562,8 +579,9 @@ class FirstData
     /**
      * Perform the API call
      * @return string
+     * @throws \JsonException
      */
-    public function process()
+    public function process(): string
     {
         return $this->doRequest();
     }
@@ -575,15 +593,16 @@ class FirstData
      *
      * @param CurlHandler optional initialized curl handle
      *
-     * @return String the response text
+     * @return string the response text
+     * @throws \JsonException
      */
-    protected function doRequest($ch = null)
+    protected function doRequest($ch = null): string
     {
         if (!$ch) {
             $ch = curl_init();
         }
         $opts                     = self::$CURL_OPTS;
-        $content                  = json_encode(array_merge($this->getPostData(), ['gateway_id' => $this->username, 'password' => $this->password, 'transaction_type' => $this->transactionType]));
+        $content                  = json_encode(array_merge($this->getPostData(), ['gateway_id' => $this->username, 'password' => $this->password, 'transaction_type' => $this->transactionType]), JSON_THROW_ON_ERROR);
         $opts[CURLOPT_POSTFIELDS] = $content;
         $opts[CURLOPT_URL]        = self::$testMode ? self::TEST_API_URL . $this->apiVersion : self::LIVE_API_URL . $this->apiVersion;
         if ($this->apiVersion >= 'v12') {
@@ -626,33 +645,30 @@ class FirstData
             $returnedMessage = $this->getResponse();
 
             // Pull out the error code from the message
-            preg_match('/\(([0-9]+)\)/', $returnedMessage, $matches);
+            preg_match('/\(\d+\)/', $returnedMessage, $matches);
 
-            $errorCodes = $this->getResponseCodes();
+            $errorCodes = $this->getBankResponseCodes();
 
             if (isset($matches[1])) {
                 // If it's not 00 then there was an error
                 $this->setErrorCode(isset($errorCodes[$matches[1]]) ? $matches[1] : 42);
-                $this->setErrorMessage(isset($errorCodes[$matches[1]]) ? $errorCodes[$matches[1]] : $errorCodes[42]);
+                $this->setErrorMessage($errorCodes[$matches[1]] ?? $errorCodes[42]);
             } else {
                 $headers = $this->getHeaders();
                 $this->setErrorCode($headers['http_code']);
                 $this->setErrorMessage($returnedMessage);
             }
-        } else {
-            // for cases when exact_resp_code is 00, but bank response code is not successful
-            if ($this->isError()) {
-                $code  = $this->getBankResponseCode();
-                $codes = $this->getBankResponseCodes();
-                $error = isset($codes[$code]) ? $codes[$code]['name'] : null;
+        } elseif ($this->isError()) {
+            $code  = $this->getBankResponseCode();
+            $codes = $this->getBankResponseCodes();
+            $error = isset($codes[$code]) ? $codes[$code]['name'] : null;
 
-                $this->setErrorMessage($error);
-                $this->setErrorCode(42);
-            } else {
-                // We have a json string, empty error message
-                $this->setErrorMessage('');
-                $this->setErrorCode(0);
-            }
+            $this->setErrorMessage($error);
+            $this->setErrorCode(42);
+        } else {
+            // We have a json string, empty error message
+            $this->setErrorMessage('');
+            $this->setErrorCode(0);
         }
 
         // close
@@ -668,12 +684,12 @@ class FirstData
      * Did we encounter an error?
      * @return boolean
      */
-    public function isError()
+    public function isError(): bool
     {
         $headers  = $this->getHeaders();
         $response = $this->getArrayResponse();
         // First make sure we got a valid response
-        if (!in_array($headers['http_code'], [200, 201, 202])) {
+        if (!in_array($headers['http_code'], [200, 201, 202], true)) {
             return true;
         }
 
@@ -687,12 +703,12 @@ class FirstData
             return true;
         }
 
-        // bank response type
-        if ($this->getBankResponseType() && $this->getBankResponseType() != 'S') {
+        // Bank response type
+        if ($this->getBankResponseType() && $this->getBankResponseType() !== 'S') {
             return true;
         }
 
-        // exact response type
+        // Exact response type
         if ($this->getExactResponseCode() > 0) {
             return true;
         }
@@ -703,108 +719,108 @@ class FirstData
 
     /**
      * Was the last call successful
-     * @return boolean
+     * @return bool
      */
-    public function isSuccess()
+    public function isSuccess(): bool
     {
-        return !$this->isError() ? true : false;
+        return !$this->isError();
     }
 
     /**
      * Check if transaction was approved
-     * @return int
+     * @return null|int
      */
-    public function isApproved()
+    public function isApproved(): ?int
     {
         return $this->getValueByKey($this->getArrayResponse(), 'transaction_approved');
     }
 
     /**
      * Get Transaction Tag
-     * @return int
+     * @return null|int
      */
-    public function getTransactionTag()
+    public function getTransactionTag(): ?int
     {
         return $this->getValueByKey($this->getArrayResponse(), 'transaction_tag');
     }
 
     /**
      * Get transaction record/receipt
-     * @return string
+     * @return null|string
      */
-    public function getTransactionRecord()
+    public function getTransactionRecord(): ?string
     {
         return $this->getValueByKey($this->getArrayResponse(), 'ctr');
     }
 
     /**
      * Get transaction auth number
-     * @return string
+     * @return null|string
      */
-    public function getAuthNumber()
+    public function getAuthNumber(): ?string
     {
         return $this->getValueByKey($this->getArrayResponse(), 'authorization_num');
     }
 
     /**
      * Get transaction transarmor token
-     * @return string
+     * @return null|string
      */
-    public function getTransArmorToken()
+    public function getTransArmorToken(): ?string
     {
         return $this->getValueByKey($this->getArrayResponse(), 'transarmor_token');
     }
 
     /**
      * Get transaction bank response code
-     * @return int
+     * @return null|int
      */
-    public function getBankResponseCode()
+    public function getBankResponseCode(): ?int
     {
         return $this->getValueByKey($this->getArrayResponse(), 'bank_resp_code');
     }
 
     /**
      * Get transaction bank response message
-     * @return string
+     * @return null|string
      */
-    public function getBankResponseMessage()
+    public function getBankResponseMessage(): ?string
     {
         return $this->getValueByKey($this->getArrayResponse(), 'bank_message');
     }
 
     /**
      * Get transaction Exact response code
-     * @return int
+     * @return null|int
      */
-    public function getExactResponseCode()
+    public function getExactResponseCode(): ?int
     {
         return $this->getValueByKey($this->getArrayResponse(), 'exact_resp_code');
     }
 
     /**
      * Get transaction Exact response message
-     * @return string
+     * @return null|string
      */
-    public function getExactResponseMessage()
+    public function getExactResponseMessage(): ?string
     {
         return $this->getValueByKey($this->getArrayResponse(), 'exact_message');
     }
 
     /**
      * Get the Address Verification System Response.
-     * @return string
+     * @return null|string
      */
-    public function getAvs()
+    public function getAvs(): ?string
     {
         return $this->getValueByKey($this->getArrayResponse(), 'avs');
     }
 
     /**
      * Get transaction bank response comment
-     * @return string
+     * @return null|string
      */
-    public function getBankResponseComments()
+    public function getBankResponseComments(): ?string
     {
         $code  = $this->getBankResponseCode();
         $codes = $this->getBankResponseCodes();
@@ -815,12 +831,12 @@ class FirstData
     /**
      * Get transaction bank response type
      *  S = Successful Response Codes
-     *    R = Reject Response Codes
-     *    D = Decline Response Codes
+     *  R = Reject Response Codes
+     *  D = Decline Response Codes
      *
      * @return string
      */
-    public function getBankResponseType()
+    public function getBankResponseType(): ?string
     {
         $code  = $this->getBankResponseCode();
         $codes = $this->getBankResponseCodes();
@@ -835,7 +851,7 @@ class FirstData
      *
      * @return void
      */
-    public function setArrayResponse($value)
+    public function setArrayResponse($value): void
     {
         $this->arrayResponse = $value;
     }
@@ -844,7 +860,7 @@ class FirstData
      * Return the array representation of the last response
      * @return array
      */
-    public function getArrayResponse()
+    public function getArrayResponse(): array
     {
         return $this->arrayResponse;
     }
@@ -852,11 +868,12 @@ class FirstData
     /**
      * Return the response represented as string
      * @return array
+     * @throws \JsonException
      */
-    protected function convertResponseToArray()
+    protected function convertResponseToArray(): array
     {
         if ($this->getResponse()) {
-            $this->setArrayResponse(json_decode($this->getResponse()));
+            $this->setArrayResponse(json_decode($this->getResponse(), true, 512, JSON_THROW_ON_ERROR));
         }
 
         return $this->getArrayResponse();
@@ -865,11 +882,11 @@ class FirstData
     /**
      * Set the response
      *
-     * @param mixed the response returned from the call
+     * @param string $response the response returned from the call
      *
-     * @return facebookLib object
+     * @return self
      */
-    protected function setResponse($response = '')
+    protected function setResponse($response = ''): self
     {
         $this->response = $response;
 
@@ -891,9 +908,9 @@ class FirstData
      *
      * @param array the headers array
      *
-     * @return facebookLib object
+     * @return self
      */
-    protected function setHeaders($headers = '')
+    protected function setHeaders($headers = []): self
     {
         $this->headers = $headers;
 
@@ -913,11 +930,11 @@ class FirstData
     /**
      * Set the error code number
      *
-     * @param integer the error code number
+     * @param int the error code number
      *
-     * @return facebookLib object
+     * @return self
      */
-    public function setErrorCode($code = 0)
+    public function setErrorCode($code = 0): self
     {
         $this->errorCode = $code;
 
@@ -927,9 +944,9 @@ class FirstData
     /**
      * Get the error code number
      *
-     * @return integer error code number
+     * @return int error code number
      */
-    public function getErrorCode()
+    public function getErrorCode(): int
     {
         return $this->errorCode;
     }
@@ -939,9 +956,9 @@ class FirstData
      *
      * @param string the error message
      *
-     * @return facebookLib object
+     * @return self
      */
-    public function setErrorMessage($message = '')
+    public function setErrorMessage($message = ''): self
     {
         $this->errorMessage = $message;
 
@@ -953,7 +970,7 @@ class FirstData
      *
      * @return string error code message
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return $this->errorMessage;
     }
@@ -961,7 +978,7 @@ class FirstData
     /**
      * Find a key inside a multi dim. array
      *
-     * @param array/object $data
+     * @param array|object $data
      * @param string $key
      *
      * @return mixed
@@ -970,19 +987,17 @@ class FirstData
     {
         if (is_countable($data) && count($data) >= 1) {
             foreach ($data as $k => $each) {
-                if ($k == $key) {
+                if ($k === $key) {
                     return $each;
                 }
 
-                if (is_array($each)) {
-                    if ($return = $this->getValueByKey($each, $key)) {
-                        return $return;
-                    }
+                if (is_array($each) && $return = $this->getValueByKey($each, $key)) {
+                    return $return;
                 }
             }
         }
 
-        if ($data instanceof \stdClass) {
+        if ($data instanceof stdClass) {
             return $data->{$key} ?? null;
         }
 
@@ -991,70 +1006,19 @@ class FirstData
     }
 
     /**
-     * Return api response codes
+     * Return API response codes
      * @return array
      */
-    protected function getResponseCodes()
+    protected function getBankResponseCodes(): array
     {
         return [
-            '00' => 'Transaction Normal',
-            '08' => 'CVV2/CID/CVC2 Data not verified',
-            '22' => 'Invalid Credit Card Number',
-            '25' => 'Invalid Expiry Date',
-            '26' => 'Invalid Amount',
-            '27' => 'Invalid Card Holder',
-            '28' => 'Invalid Authorization No',
-            '31' => 'Invalid Verification String',
-            '32' => 'Invalid Transaction Code',
-            '57' => 'Invalid Reference No',
-            '58' => 'Invalid AVS String, The length of the AVS String has exceeded the max. 40 characters',
-            '60' => 'Invalid Customer Reference Number',
-            '63' => 'Invalid Duplicate',
-            '64' => 'Invalid Refund',
-            '68' => 'Restricted Card Number',
-            '72' => 'Data within the transaction is incorrect',
-            '93' => 'Invalid authorization number entered on a pre-auth completion',
-            '11' => 'Invalid Sequence No',
-            '12' => 'Message Timed-out at Host',
-            '21' => 'BCE Function Error',
-            '23' => 'Invalid Response from First Data',
-            '30' => 'Invalid Date From Host',
-            '10' => 'Invalid Transaction Description',
-            '14' => 'Invalid Gateway ID',
-            '15' => 'Invalid Transaction Number',
-            '16' => 'Connection Inactive',
-            '17' => 'Unmatched Transaction',
-            '18' => 'Invalid Reversal Response',
-            '19' => 'Unable to Send Socket Transaction',
-            '20' => 'Unable to Write Transaction to File',
-            '24' => 'Unable to Void Transaction',
-            '40' => 'Unable to Connect',
-            '41' => 'Unable to Send Logon',
-            '42' => 'Unable to Send Trans',
-            '43' => 'Invalid Logon',
-            '52' => 'Terminal not Activated',
-            '53' => 'Terminal/Gateway Mismatch',
-            '54' => 'Invalid Processing Center',
-            '55' => 'No Processors Available',
-            '56' => 'Database Unavailable',
-            '61' => 'Socket Error',
-            '62' => 'Host not Ready',
-            '44' => 'Address not Verified',
-            '70' => 'Transaction Placed in Queue',
-            '73' => 'Transaction Received from Bank',
-            '76' => 'Reversal Pending',
-            '77' => 'Reversal Complete',
-            '79' => 'Reversal Sent to Bank',
-        ];
-    }
-
-    /**
-     * API Bank Response Code, type, name, comments and action required
-     * @return array
-     */
-    protected function getBankResponseCodes()
-    {
-        return [
+            0   => [
+                'response' => 'D',
+                'code'     => '000',
+                'name'     => 'No Answer',
+                'action'   => 'Resend',
+                'comments' => 'First Data received no answer from auth network',
+            ],
             100 => [
                 'response' => 'S',
                 'code'     => '100',
@@ -1145,41 +1109,6 @@ class FirstData
                 'name'     => 'Conditional Approval',
                 'action'   => 'Wait',
                 'comments' => 'Conditional Approval - Hold shipping for 24 hours',
-            ],
-            704 => [
-                'response' => 'S',
-                'code'     => '704',
-                'name'     => 'FPO Accepted',
-                'action'   => 'N/A',
-                'comments' => 'Stored in FPO database',
-            ],
-            741 => [
-                'response' => 'R/D',
-                'code'     => '741',
-                'name'     => 'Validation Failed',
-                'action'   => 'Fix',
-                'comments' => 'Unable to validate the Debit Authorization Record - based on amount, action code, and MOP (Batch response reason code for Debit Only)',
-            ],
-            750 => [
-                'response' => 'R/D',
-                'code'     => '750',
-                'name'     => 'Invalid Transit Routing Number',
-                'action'   => 'Fix',
-                'comments' => 'EC - ABA transit routing number is invalid, failed check digit',
-            ],
-            751 => [
-                'response' => 'R/D',
-                'code'     => '751',
-                'name'     => 'Transit Routing Number Unknown',
-                'action'   => 'Fix',
-                'comments' => 'Transit routing number not on list of current acceptable numbers.',
-            ],
-            754 => [
-                'response' => 'R/D',
-                'code'     => '754',
-                'name'     => 'Account Closed',
-                'action'   => 'Cust',
-                'comments' => 'Bank account has been closed For PayPal and GoogleCheckout – the customer’s account was closed / restricted',
             ],
             201 => [
                 'response' => 'R',
@@ -1419,6 +1348,13 @@ class FirstData
                 'action'   => 'Call',
                 'comments' => 'Division does not participate in Soft Merchant Descriptor. Contact your First Data Representative for information on getting set up for Soft Merchant Descriptor.',
             ],
+            260 => [
+                'response' => 'D',
+                'code'     => '260',
+                'name'     => 'Soft AVS',
+                'action'   => 'Cust.',
+                'comments' => 'Authorization network could not reach the bank which issued the card',
+            ],
             261 => [
                 'response' => 'R',
                 'code'     => '261',
@@ -1467,76 +1403,6 @@ class FirstData
                 'name'     => 'Transaction Not Supported',
                 'action'   => 'N/A',
                 'comments' => 'The requested transaction type is blocked from being used with this card. Note:&nbsp; This may be the result of either an association rule, or a merchant boarding option.',
-            ],
-            351 => [
-                'response' => 'R',
-                'code'     => '351',
-                'name'     => 'TransArmor Service Unavailable',
-                'action'   => 'Resend',
-                'comments' => 'TransArmor Service temporarily unavailable.',
-            ],
-            353 => [
-                'response' => 'R',
-                'code'     => '353',
-                'name'     => 'TransArmor Invalid Token or PAN',
-                'action'   => 'Fix',
-                'comments' => 'TransArmor Service encountered a problem converting the given Token or PAN with the given Token Type.',
-            ],
-            354 => [
-                'response' => 'R',
-                'code'     => '354',
-                'name'     => 'TransArmor Invalid Result',
-                'action'   => 'Cust',
-                'comments' => 'TransArmor Service encountered a problem with the resulting Token/PAN.',
-            ],
-            740 => [
-                'response' => 'R',
-                'code'     => '740',
-                'name'     => 'Match Failed',
-                'action'   => 'Fix',
-                'comments' => 'Unable to validate the debit. Authorization Record - based on amount, action code, and MOP (Batch response reason code for Debit Only)',
-            ],
-            752 => [
-                'response' => 'R',
-                'code'     => '752',
-                'name'     => 'Missing Name',
-                'action'   => 'Fix',
-                'comments' => 'Pertains to deposit transactions only',
-            ],
-            753 => [
-                'response' => 'R',
-                'code'     => '753',
-                'name'     => 'Invalid Account Type',
-                'action'   => 'Fix',
-                'comments' => 'Pertains to deposit transactions only',
-            ],
-            834 => [
-                'response' => 'R',
-                'code'     => '834',
-                'name'     => 'Unauthorized User',
-                'action'   => 'Fix',
-                'comments' => 'Method of payment is invalid for the division',
-            ],
-            570 => [
-                'response' => 'D ',
-                'code'     => '570 ',
-                'name'     => 'Stop payment order one time recurring/ installment',
-                'action'   => 'Fix',
-                'comments' => 'Cardholder has requested this one recurring/installment payment be stopped.',
-            ],
-            000 => [
-                'response' => 'D',
-                'code'     => '000',
-                'name'     => 'No Answer',
-                'action'   => 'Resend',
-                'comments' => 'First Data received no answer from auth network',
-            ],
-            260 => [
-                'response' => 'D',
-                'code'     => '260',
-                'name'     => 'Soft AVS',
-                'action'   => 'Cust.',
-                'comments' => 'Authorization network could not reach the bank which issued the card',
             ],
             301 => [
                 'response' => 'D',
@@ -1587,12 +1453,33 @@ class FirstData
                 'action'   => 'Fix',
                 'comments' => 'Transaction cannot be matched to an authorization that was stored in the database. Note: MOP = MC, MD, VI only',
             ],
+            351 => [
+                'response' => 'R',
+                'code'     => '351',
+                'name'     => 'TransArmor Service Unavailable',
+                'action'   => 'Resend',
+                'comments' => 'TransArmor Service temporarily unavailable.',
+            ],
             352 => [
                 'response' => 'D',
                 'code'     => '352',
                 'name'     => 'Expired Lock',
                 'action'   => 'Cust.',
                 'comments' => 'ValueLink - Lock on funds has expired.',
+            ],
+            353 => [
+                'response' => 'R',
+                'code'     => '353',
+                'name'     => 'TransArmor Invalid Token or PAN',
+                'action'   => 'Fix',
+                'comments' => 'TransArmor Service encountered a problem converting the given Token or PAN with the given Token Type.',
+            ],
+            354 => [
+                'response' => 'R',
+                'code'     => '354',
+                'name'     => 'TransArmor Invalid Result',
+                'action'   => 'Cust',
+                'comments' => 'TransArmor Service encountered a problem with the resulting Token/PAN.',
             ],
             401 => [
                 'response' => 'D',
@@ -1683,7 +1570,7 @@ class FirstData
                 'code'     => '524',
                 'name'     => 'Altered Data',
                 'action'   => 'Fix',
-                'comments' => 'Altered Data\Magnetic stripe incorrect',
+                'comments' => 'Altered Data\\Magnetic stripe incorrect',
             ],
             530 => [
                 'response' => 'D',
@@ -1705,6 +1592,13 @@ class FirstData
                 'name'     => 'Do Not Honor - High Fraud',
                 'action'   => 'Cust',
                 'comments' => 'The transaction has failed PayPal or Google Checkout risk models',
+            ],
+            570 => [
+                'response' => 'D ',
+                'code'     => '570 ',
+                'name'     => 'Stop payment order one time recurring/ installment',
+                'action'   => 'Fix',
+                'comments' => 'Cardholder has requested this one recurring/installment payment be stopped.',
             ],
             571 => [
                 'response' => 'D',
@@ -1881,6 +1775,62 @@ class FirstData
                 'action'   => 'Cust',
                 'comments' => 'Merchant has requested First Data not process credit cards with this BIN',
             ],
+            704 => [
+                'response' => 'S',
+                'code'     => '704',
+                'name'     => 'FPO Accepted',
+                'action'   => 'N/A',
+                'comments' => 'Stored in FPO database',
+            ],
+            740 => [
+                'response' => 'R',
+                'code'     => '740',
+                'name'     => 'Match Failed',
+                'action'   => 'Fix',
+                'comments' => 'Unable to validate the debit. Authorization Record - based on amount, action code, and MOP (Batch response reason code for Debit Only)',
+            ],
+            741 => [
+                'response' => 'R/D',
+                'code'     => '741',
+                'name'     => 'Validation Failed',
+                'action'   => 'Fix',
+                'comments' => 'Unable to validate the Debit Authorization Record - based on amount, action code, and MOP (Batch response reason code for Debit Only)',
+            ],
+            750 => [
+                'response' => 'R/D',
+                'code'     => '750',
+                'name'     => 'Invalid Transit Routing Number',
+                'action'   => 'Fix',
+                'comments' => 'EC - ABA transit routing number is invalid, failed check digit',
+            ],
+            751 => [
+                'response' => 'R/D',
+                'code'     => '751',
+                'name'     => 'Transit Routing Number Unknown',
+                'action'   => 'Fix',
+                'comments' => 'Transit routing number not on list of current acceptable numbers.',
+            ],
+            752 => [
+                'response' => 'R',
+                'code'     => '752',
+                'name'     => 'Missing Name',
+                'action'   => 'Fix',
+                'comments' => 'Pertains to deposit transactions only',
+            ],
+            753 => [
+                'response' => 'R',
+                'code'     => '753',
+                'name'     => 'Invalid Account Type',
+                'action'   => 'Fix',
+                'comments' => 'Pertains to deposit transactions only',
+            ],
+            754 => [
+                'response' => 'R/D',
+                'code'     => '754',
+                'name'     => 'Account Closed',
+                'action'   => 'Cust',
+                'comments' => 'Bank account has been closed For PayPal and GoogleCheckout – the customer’s account was closed / restricted',
+            ],
             802 => [
                 'response' => 'D',
                 'code'     => '802',
@@ -1922,6 +1872,13 @@ class FirstData
                 'name'     => 'Invalid Merchant',
                 'action'   => 'Fix',
                 'comments' => 'Service Established (SE) number is incorrect, closed or Issuer does not allow this type of transaction',
+            ],
+            834 => [
+                'response' => 'R',
+                'code'     => '834',
+                'name'     => 'Unauthorized User',
+                'action'   => 'Fix',
+                'comments' => 'Method of payment is invalid for the division',
             ],
             902 => [
                 'response' => 'D',
