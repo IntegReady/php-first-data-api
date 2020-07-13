@@ -12,9 +12,10 @@
         "guzzlehttp/guzzle": "~6.0"
     },
     "autoload": {
-        "psr-4": {
-            "integready\\firstdataapi\\": "/integready/firstdataapi/src"
+        "psr-0": {
+            "integready\\firstdataapi\\": "integready/firstdataapi/src"
         }
     },
+    "target-dir": "integready/firstdataapi",
     "minimum-stability": "stable"
 }
