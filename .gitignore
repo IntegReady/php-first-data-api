@@ -1,0 +1,13 @@
+# PhpStorm project files
+.idea
+
+# NetBeans project files
+nbproject
+
+# Zend Studio for Eclipse project files
+.buildpath
+.project
+.settings
+
+vendor
+composer.lock
