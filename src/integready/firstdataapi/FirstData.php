@@ -83,7 +83,7 @@ class FirstData
     protected $apiKey = '';
 
     /**
-     * @var boolean - set whether we are in a test mode or not
+     * @var bool - set whether we are in a test mode or not
      */
     public static $testMode = false;
 
@@ -244,7 +244,7 @@ class FirstData
     /**
      * Set whether we are in a test mode or not
      *
-     * @param boolean $value
+     * @param bool $value
      *
      * @return void
      */
@@ -682,7 +682,7 @@ class FirstData
 
     /**
      * Did we encounter an error?
-     * @return boolean
+     * @return bool
      */
     public function isError(): bool
     {
@@ -978,7 +978,7 @@ class FirstData
     /**
      * Find a key inside a multi dim. array
      *
-     * @param array|object $data
+     * @param array $data
      * @param string $key
      *
      * @return mixed
@@ -997,11 +997,6 @@ class FirstData
             }
         }
 
-        if ($data instanceof stdClass) {
-            return $data->{$key} ?? null;
-        }
-
-        // Nothing matched
         return null;
     }
 
