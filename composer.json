@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "integready\\firstdataapi\\": "/src/"
+            "integready\\firstdataapi\\": "/integready/firstdataapi/src"
         }
     },
     "minimum-stability": "stable"
